@@ -35,8 +35,8 @@ def threshold(image, number):
         number = np.median(image)
     ave1.clear()
     ave2.clear()
-    for y in range(0, image.size[1]):
-        for x in range(0, image.size[0]):
+    for y in range(0, image.shape[1]):
+        for x in range(0, image.shape[0]):
             g = image.getpixel((x, y))
             if g > number:
                 ave1.append(g)
@@ -125,9 +125,18 @@ def main():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cv2.imshow('gray', gray)
         cv2.waitKey(0)
+
+        #仿射变换
+
+
+        # 均值滤波
+        dst = cv2.boxFilter(gray, -1, (5, 5), normalize=True)
+        img1 = cv2.blur(dst, (5, 5))
+        #img1 = cv2.GaussianBlur(img, (5, 5), 0)  #高斯滤波
+
         # 顶帽变换
-        kernel = np.ones((5, 5), np.uint8)
-        open = cv2.morphologyEx(gray, cv2.MORPH_OPEN, kernel)
+        kernel2 = np.ones((5, 5), np.uint8)
+        open = cv2.morphologyEx(img1, cv2.MORPH_OPEN, kernel2)
         img2 = cv2.subtract(gray, open)
         cv2.imshow('顶帽变换后', img2)
         cv2.waitKey(0)
@@ -139,7 +148,8 @@ def main():
         cv2.imshow("伽马变换", img3)
         cv2.waitKey(0)
 
-        cv2.imwrite('processed %s' % image_file, img3)
+        threshold(img3, 0)
+        #cv2.imwrite('processed %s' % image_file, img3)
 
         #ret, binary = cv2.threshold(img2, 127, 255, cv2.THRESH_BINARY)
         #cv2.imshow("二值化", binary)
